@@ -44,9 +44,17 @@
     // Для построения таблиц
     ////////////////////////////////
 
+    // Массив с данными главной таблицы
+    function getArr() {
+        return vue._data.arr;
+    }
+    function setArr(arr) {
+        vue._data.arr = arr;
+    }
+
     // Меняем размер главной таблицы
     function resize(rows, columns) {
-        let arr = vue._data.arr;
+        let arr = getArr();
         if (rows === undefined || columns === undefined) {
             rows = +prompt('Кол-во строк', '5');
             columns = +prompt('Кол-во столбцов', '5');
@@ -77,9 +85,7 @@
                 }
             }
         }
-        vue._data.arr = newArr;
-        // table.arr = newArr;
-        // arr = newArr;
+        setArr(newArr);
     }
 
     // Перевод id ячейки в букву (для обозначения столбцов)
