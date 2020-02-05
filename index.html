@@ -12,7 +12,8 @@
 <table id="table" >
     <tr v-for="(row, rowId) of arr">
         <td v-for="(value, colId) of row">
-            <input type="text" v-model="arr[rowId][colId]"/>
+            <b v-if="rowId == 0 || colId == 0">{{arr[rowId][colId]}}</b>
+            <input v-else type="text" v-model="arr[rowId][colId]"/>
         </td>
     </tr>
 
