@@ -1,35 +1,118 @@
+<!--
+  ~ Copyright © 2020 Aleksandr Kolbasov
+  -->
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>For work</title>
 </head>
 <body>
 
-<table id="app" contenteditable="true" >
-
-    <tr>
-        <td>{{one}}</td>
-        <td id="t">2</td>
-        <td>3</td>
-    </tr>
-    <tr>
-        <td>4</td>
-        <td>5</td>
-        <td>6</td>
-    </tr>
-    <tr>
-        <td>7</td>
-        <td>8</td>
-        <td>9</td>
+<table id="table" >
+    <tr v-for="(row, rowId) of arr">
+        <td v-for="(value, colId) of row">
+            <input type="text" v-model="arr[rowId][colId]"/>
+        </td>
     </tr>
 
 </table>
 
+<button onclick="resize()">Изменить размер</button>
+
+<!-- Vue.js -->
 <!-- development version, includes helpful console warnings -->
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="js.js"	></script>
+<script>
+    ////////////////////////////////
+    // Init block
+    ////////////////////////////////
+    let vue = new Vue({
+        el: '#table',
+        nothing : '',
+        data: {
+            arr: [[]]
+        },
+        methods: {
+        }
+    });
+    // Начальное значение
+    resize(5, 5);
 
+    ////////////////////////////////
+    // Для построения таблиц
+    ////////////////////////////////
+
+    // Меняем размер главной таблицы
+    function resize(rows, columns) {
+        let arr = vue._data.arr;
+        if (rows === undefined || columns === undefined) {
+            rows = +prompt('Кол-во строк', '5');
+            columns = +prompt('Кол-во столбцов', '5');
+        }
+
+        // + 1 для названий строк и столбцов
+        rows = rows > 0 ? rows + 1 : 2;
+        columns = columns > 0 ? columns + 1 : 2;
+
+        // console.log(`rows: ${rows} columns: ${columns} (+ 1 for row & column names)`);
+
+        let newArr = [[]];
+        /*
+        # A B
+        1 ` `
+        2 ` `
+         */
+        for (let row = 0; row < rows; row++) {
+            newArr[row] = row === 0 ? ['#'] : [row];
+            // console.log(newArr.toString());
+            for (let col = 1; col < columns; col++) {
+                if (row === 0) {
+                    newArr[row][col] = toAlpha(col);
+                } else {
+                    newArr[row][col] =
+                        (arr[row] === undefined || arr[row][col] === undefined) ?
+                            '' : arr[row][col];
+                }
+            }
+        }
+        vue._data.arr = newArr;
+        // table.arr = newArr;
+        // arr = newArr;
+    }
+
+    // Перевод id ячейки в букву (для обозначения столбцов)
+    // 1 -> A, 26 -> Z, 27 -> AA...
+    function toAlpha(number) {
+        let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let result = '';
+        while (number > 0) {
+            number--;
+            // console.log((number ) % alphabet.length);
+            result += alphabet[number % alphabet.length];
+            // console.log(result);
+            number = Math.floor(number / alphabet.length);
+            // console.log(number);
+        }
+        return result.split('').reverse().join('');
+    }
+
+    // Перевод названия столбца в его id
+    function toNumber(alphas) {
+        alphas = alphas.toString().toUpperCase().split('');
+        // console.log(`alphas: ${alphas}, length: ${alphas.length}`);
+        let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let result = 0;
+        for (let alpha of alphas) {
+            // console.log(`alpha: ${alpha}`);
+            if (result !== 0) result *= alphabet.length;
+            result += alphabet.indexOf(alpha) + 1;
+            // console.log(`result: ${result}`);
+        }
+        return result;
+    }
+
+</script>
 
 </body>
 </html>
