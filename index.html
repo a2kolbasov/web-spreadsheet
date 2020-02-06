@@ -9,17 +9,35 @@
 </head>
 <body>
 
-<table id="table" >
-    <tr v-for="(row, rowId) of arr">
-        <td v-for="(value, colId) of row">
-            <b v-if="rowId == 0 || colId == 0">{{arr[rowId][colId]}}</b>
-            <input v-else type="text" v-model="arr[rowId][colId]"/>
-        </td>
-    </tr>
 
-</table>
+<div id="tables">
+    <table>
+        <tr v-for="(row, rowId) of arr">
+            <td v-for="(value, colId) of row">
+                <b v-if="rowId == 0 || colId == 0">{{value}}</b>
+                <input v-else type="text" v-model="arr[rowId][colId]"/>
+            </td>
+        </tr>
+    </table>
 
-<button onclick="resize()">Изменить размер</button>
+    <button onclick="resize()">Изменить размер</button>
+    <div>
+        <input type="file" id="fileImport" style="display: none"> <!-- TODO: accept="text/csv" -->
+        <button onclick="csvImport()">Import CSV</button>
+        <button onclick="csvExport()">Export CSV</button>
+    </div>
+    <button onclick="calc()">Расчитать</button>
+
+    <table>
+        <tr v-for="(row, rowId) of calcArr">
+            <td v-for="(value, colId) of row">
+                <b v-if="rowId == 0 || colId == 0">{{arr[rowId][colId]}}</b>
+                <input v-else-if="calcArr[rowId][colId].error" v-model="calcArr[rowId][colId].value" style="color: red"/>
+                <input v-else type="text" v-model="calcArr[rowId][colId].value"/>
+            </td>
+        </tr>
+    </table>
+</div>
 
 <!-- Vue.js -->
 <!-- development version, includes helpful console warnings -->
@@ -29,10 +47,10 @@
     // Init block
     ////////////////////////////////
     let vue = new Vue({
-        el: '#table',
-        nothing : '',
+        el: '#tables',
         data: {
-            arr: [[]]
+            arr: [[]],
+            calcArr: [[]],
         },
         methods: {
         }
@@ -117,6 +135,31 @@
             // console.log(`result: ${result}`);
         }
         return result;
+    }
+
+    function calc() {
+        throw 'todo' // todo
+    }
+
+    ////////////////////////////////
+    // CSV
+    ////////////////////////////////
+
+    function csvImport() {
+        // https://developer.mozilla.org/ru/docs/Web/API/File/Using_files_from_web_applications
+
+        let fileImport = document.getElementById('fileImport');
+        fileImport.click();
+        let file = fileImport.files[0];
+
+        // file.data.toString();
+        console.log(file.data.toString());
+
+        throw 'todo' // todo
+    }
+
+    function csvExport() {
+        throw 'todo' // todo
     }
 
 </script>
