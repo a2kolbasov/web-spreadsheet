@@ -20,17 +20,17 @@
         </tr>
     </table>
 
-    <button onclick="resize()">Изменить размер</button>
+    <button @click="canExportResults = false" onclick="resize()">Изменить размер</button>
     <div>
         <input type="file" id="fileImport" style="display: none;"> <!-- TODO: accept="text/csv" -->
-        <button onclick="csvImport()">Import CSV</button>
+        <button @click="canExportResults = false" onclick="csvImport()">Import CSV</button>
         <button onclick="csvExport()">Export CSV</button>
     </div>
 
     <br>
     <button @click="canExportResults = true" onclick="calc()">Вычислить</button>
 
-    <table>
+    <table v-if="canExportResults">
         <tr v-for="(row, rowId) of calcArr">
             <td v-for="(value, colId) of row">
                 <b v-if="rowId == 0 || colId == 0">{{arr[rowId][colId]}}</b>
@@ -68,17 +68,9 @@
     // Для построения таблиц
     ////////////////////////////////
 
-    // Массив с данными главной таблицы
-    function getArr() {
-        return vue._data.arr;
-    }
-    function setArr(arr) {
-        vue._data.arr = arr;
-    }
-
     // Меняем размер главной таблицы
     function resize(rows, columns) {
-        let arr = getArr();
+        let arr = vue._data.arr;
         if (rows === undefined || columns === undefined) {
             rows = +prompt('Кол-во строк', '5');
             columns = +prompt('Кол-во столбцов', '5');
@@ -109,7 +101,7 @@
                 }
             }
         }
-        setArr(newArr);
+        vue._data.arr = newArr;
     }
 
     // Перевод id ячейки в букву (для обозначения столбцов)
@@ -144,6 +136,11 @@
     }
 
     function calc() {
+        let arr = vue._data.arr;
+        //
+
+        //
+        vue._data.calcArr = arr.slice();
         throw 'todo' // todo
     }
 
@@ -165,6 +162,10 @@
     }
 
     function csvExport() {
+        throw 'todo' // todo
+    }
+
+    function csvExportResults() {
         throw 'todo' // todo
     }
 
