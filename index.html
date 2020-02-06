@@ -26,7 +26,9 @@
         <button onclick="csvImport()">Import CSV</button>
         <button onclick="csvExport()">Export CSV</button>
     </div>
-    <button onclick="calc()">Расчитать</button>
+
+    <br>
+    <button @click="canExportResults = true" onclick="calc()">Вычислить</button>
 
     <table>
         <tr v-for="(row, rowId) of calcArr">
@@ -37,6 +39,8 @@
             </td>
         </tr>
     </table>
+
+    <button v-if="canExportResults" onclick="csvExportResults()">Экспорт результатов</button>
 </div>
 
 <!-- Vue.js -->
@@ -51,6 +55,7 @@
         data: {
             arr: [[]],
             calcArr: [[]],
+            canExportResults : false,
         },
         methods: {
         }
