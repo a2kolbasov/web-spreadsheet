@@ -4,7 +4,7 @@
 
 // TODO: РАЗБИТЬ ПО МОДУЛЯМ И КЛАССАМ, ДОБАВИТЬ ДОКУМЕНТАЦИЮ
 
-import {Lexeme, Types, lexer, CELL_SEPARATOR} from "./lexer.js";
+import {Token, Types, lexer, CELL_SEPARATOR} from "./lexer.js";
 import {toNumber} from "./array-utils.js";
 import {parser} from "./parser.js";
 
@@ -20,7 +20,7 @@ export class Result {
     result = '';
     hasError = false;
     errorMessage = '';
-    /** @type {Lexeme[]} */
+    /** @type {Token[]} */
     lexemes = []; // Lexeme[]
 
     polish = []; // Token[]
@@ -88,7 +88,7 @@ function _calc(resultArray) {
             }
 
             if (result.polish.length !== 0 && result.result === '') {
-                /** @type Lexeme */
+                /** @type Token */
                 let value = null;
                 try {
                     value = calculatePolish(result.polish, resultArray);
@@ -108,12 +108,12 @@ function _calc(resultArray) {
 
 /**
  * Вычисляем по польской записи
- * @param polish {Lexeme[]}
+ * @param polish {Token[]}
  * @param resultArray {Result[]} нуден для получения данных из других ячеек
- * @returns {Lexeme|null} токен с результатом или null - при отсутствии значения другой ячейки
+ * @returns {Token|null} токен с результатом или null - при отсутствии значения другой ячейки
  */
 function calculatePolish(polish, resultArray) {
-    /** @type {Lexeme[]} */
+    /** @type {Token[]} */
     let stack = [];
 
     for (let token of polish) {
@@ -131,30 +131,39 @@ function calculatePolish(polish, resultArray) {
                 // Пока не посчитали
                 return null;
             } else {
-                stack.push( new Lexeme(cell.result, Types.NUM) );
+                stack.push( new Token(cell.result, Types.NUM) );
             }
 
         } else if (token.type === Types.OP) {
             if (stack.length < 2)
                 throw `Ошибка в выражении`;
-            let op2 = +stack.pop(),
-                op1 = +stack.pop();
+            let op2 = + stack.pop().value,
+                op1 = + stack.pop().value;
+
             switch (token.value) {
                 case '+':
-                    stack.push(new Lexeme(op1 + op2));
+                    stack.push(new Token(op1 + op2));
+                    debugger
                     break;
                 case '-':
-                    stack.push(new Lexeme(op1 - op2));
+                    stack.push(new Token(op1 - op2));
+                    debugger
                     break;
                 case "*":
-                    stack.push(new Lexeme(op1 * op2));
+                    stack.push(new Token(op1 * op2));
+                    debugger
                     break;
                 case "/":
-                    stack.push(new Lexeme(op1 / op2));
+                    stack.push(new Token(op1 / op2));
+                    debugger
+                    break;
             }
         }
     }
-    if (stack.length > 1)
+    if (stack.length > 1) {
+        console.log(`в стеке: ${stack.toString()}`);
+        debugger;
         throw `Ошибка в выражении`;
+    }
     return stack[0];
 }

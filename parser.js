@@ -2,27 +2,29 @@
  * Copyright © 2020 Aleksandr Kolbasov
  */
 
-import {Types} from "./lexer.js";
+import {Types, Token} from "./lexer.js";
 
 /**
- *
- * @param lexemes {Lexeme[]}
- * @returns {Lexeme[]}
+ * Переводит токены в обратную польскую запись
+ * @param tokens {Token[]} токены из лексера
+ * @returns {Token[]} обратная польская запись
  */
-export function parser(lexemes) {
-    /** @type {Lexeme[]} */
+export function parser(tokens) {
+    /** @type {Token[]} */
     let result = [],
         stack = [];
 
     // Перевод в обратную польскую запись
 
-    for (let token of lexemes) {
+    for (let token of tokens) {
         switch (token.type) {
             case Types.NUM:
             case Types.CELL:
                 result.push(token);
+                debugger
                 break;
             case Types.OP:
+            case Types.BRACKET:
                 op(token);
                 break;
             default:
@@ -31,46 +33,63 @@ export function parser(lexemes) {
     }
 
     while (stack.length > 0) {
-        alert(stack.toString());
+        // alert(stack.toString());
         let token = stack.pop();
-        alert(typeof token);
+        // alert(typeof token);
         result.push(token);
     }
     return result;
 
     //// Функция в функции :-)
+    /** @param token {Token} */
     function op(token) {
-        /** @type {Lexeme} */
-        let stackToken = null;
+        /** @type {Token} */
+        // let stackToken = null;
 
         switch (token.value) {
             case '(':
-                stack.push(token);
-                break;
+                token.priority = -1;
+                pushToStack(token);
+                return;
             case ')':
-                stackToken = stack.pop();
-                while (typeof stackToken !== "undefined" && stackToken.value !== '(') {
-                    result.push(stackToken);
-                    stackToken = stack.pop();
+                while (stack.length > 0) {
+                    let stackToken = stack.pop();
+                    if (stackToken.value !== '(')
+                        result.push(stackToken);
+                    else
+                        return;
                 }
-                if (typeof stackToken === "undefined")
-                    throw "Ошибка в выражении";
-                break;
-            case '+':
-            case '-':
-                // todo: в отдельную функцию
-                stackToken = stack.pop();
-                while (typeof stackToken !== "undefined" && (stackToken.value === '*' || stackToken.value === '/')) {
-                    result.push(stackToken);
-                    stackToken = stack.pop();
-                }
-                stack.push(stackToken);
-                stack.push(token);
-                break;
+                throw "Ошибка в выражении (проверьте кол-во скобок)";
             case '*':
             case '/':
-                stack.push(token);
-                break;
+                token.priority = 10;
+                pushToStack(token);
+                return;
+            case '+':
+            case '-':
+                token.priority = 5;
+                pushToStack(token);
+                return;
+            default:
+                throw `Нет инструкции к токену`
         }
+    }
+
+    /**
+     * Размещает и выталкивает токены в/из стека согласно приоритету
+     * @param token {Token}
+     */
+    function pushToStack(token) {
+        while (stack.length > 0) {
+            let stackToken = stack[stack.length - 1];
+
+            if (stackToken.priority >= token.priority) {
+                stack.pop();
+                result.push(stackToken);
+            } else {
+                break;
+            }
+        }
+        stack.push(token);
     }
 }

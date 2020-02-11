@@ -2,25 +2,27 @@
  * Copyright © 2020 Aleksandr Kolbasov
  */
 
-import {ALPHABET} from "./array-utils.js";
-
 export const CELL_SEPARATOR = '#';
 
 export const Types = {
     OP: 'OP',
     NUM: 'NUM',
     CELL: 'CELL',
+    BRACKET : 'BRACKET',
 };
 
-export class Lexeme {
-    /** @type {string} */
+export class Token {
+    /** @type string */
     value;
-    /** @type {string} */
+    /** @type string */
     type;
+    /** @type number */
+    priority;
 
-    constructor(value, type) {
+    constructor(value, type, priority = 100) {
         this.value = String(value);
         this.type = type;
+        this.priority = priority;
     }
 
     set value(value) {
@@ -33,9 +35,9 @@ let list = [];
 let counter = 0;
 
 /**
- * Разбивает expression на лексемы (токены)
+ * Разбивает expression на токены (лексемы)
  * @param expression {string} обрабатываемое выражение
- * @returns {Lexeme[]} обнаруженные токены
+ * @returns {Token[]} обнаруженные токены
  */
 export function lexer(expression) {
     // init
@@ -53,8 +55,9 @@ export function lexer(expression) {
         counter +=
             ch === ' ' ? 1 :
                 isNum(ch) ? num( expression.slice(counter) ) :
-                    isOp(ch) ? op( expression.slice(counter) ) :
-                        isChar(ch) ? cell( expression.slice(counter) ) : NaN;
+                    isBracket(ch) ? bracket(ch) :
+                        isOp(ch) ? op( expression.slice(counter) ) :
+                            isChar(ch) ? cell( expression.slice(counter) ) : NaN;
 
         if (isNaN(counter)) {
             throw `Неизвестный символ '${ch}'`;
@@ -63,8 +66,12 @@ export function lexer(expression) {
     return list;
 }
 
+function isBracket(ch) {
+    return /[\(\)]/.test(ch);
+}
+
 function isOp(ch) {
-    return /[\+\-\*\/\(\)]/.test(ch);
+    return /[\+\-\*\/]/.test(ch);
 }
 
 function isChar(ch) {
@@ -75,8 +82,16 @@ function isNum(ch) {
     return /[0-9\.]/.test(ch);
 }
 
+function _includes(ch) {
+}
+
 function op(expr) {
     push(expr[0], Types.OP);
+    return 1;
+}
+
+function bracket(ch) {
+    push(ch, Types.BRACKET); // ch[0]
     return 1;
 }
 
@@ -126,5 +141,5 @@ function syntaxError(position) {
  * @param type {string}
  */
 function push(value, type) {
-    list.push( new Lexeme(value, type) );
+    list.push( new Token(value, type) );
 }
