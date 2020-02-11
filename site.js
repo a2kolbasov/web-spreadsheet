@@ -4,6 +4,7 @@
 
 import * as utils from "./array-utils.js";
 import * as csv from "./csv.js";
+import * as calculate from "./calc.js";
 
 ////////////////////////////////
 // Init block
@@ -55,7 +56,8 @@ export function resize(rows, columns) {
 }
 
 export function calc() {
-    throw 'todo' // todo calc()
+    setCalcArr( calculate.calc( getArr() ) );
+    // throw 'todo' // todo calc()
 }
 
 ////////////////////////////////

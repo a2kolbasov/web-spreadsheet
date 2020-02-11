@@ -64,7 +64,7 @@ export function lexer(expression) {
 }
 
 function isOp(ch) {
-    return /[\+\-\*\/]/.test(ch);
+    return /[\+\-\*\/\(\)]/.test(ch);
 }
 
 function isChar(ch) {
