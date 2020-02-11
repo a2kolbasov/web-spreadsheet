@@ -16,6 +16,11 @@ export class Result {
     set result(result) {
         this.result = String(result);
     }
+
+    toString() {
+		return this.result;
+	}
+
     /** @type string */
     result = '';
     hasError = false;

@@ -57,7 +57,6 @@ export function resize(rows, columns) {
 
 export function calc() {
     setCalcArr( calculate.calc( getArr() ) );
-    // throw 'todo' // todo calc()
 }
 
 ////////////////////////////////
@@ -76,16 +75,24 @@ export function csvImport() {
     fileReader.readAsText(file);
 }
 
-export function csvExport() {
+/**
+ * Вызывает загрузку файла с таблицей в формате CSV
+ * @param array {string[][]} экспортируемая таблица
+ * @private
+ */
+function _csvExport(array) {
     let link = document.getElementById('fileExport');
-    let csvString = csv.toCSV(getArr());
+    // fixme: 1) Result.toString(), 2) в документации String -> string..., 3) Экспорт в виде ссылки в новом окне (мешает)
+    let csvString = csv.toCSV(array);
     let href = 'data:text/csv;charset=UTF-8,' + window.encodeURIComponent(csvString);
-    // console.log(`href = ${href}`);
     link.setAttribute('href', href);
     link.setAttribute('download', 'table.csv');
     link.click();
 }
 
+export function csvExport() {
+    _csvExport(getArr());
+}
 export function csvExportResults() {
-    throw 'todo' // todo csvExportResults()
+    _csvExport(getCalcArr());
 }
