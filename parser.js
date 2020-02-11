@@ -21,7 +21,6 @@ export function parser(tokens) {
             case Types.NUM:
             case Types.CELL:
                 result.push(token);
-                debugger
                 break;
             case Types.OP:
             case Types.BRACKET:
@@ -33,15 +32,17 @@ export function parser(tokens) {
     }
 
     while (stack.length > 0) {
-        // alert(stack.toString());
         let token = stack.pop();
-        // alert(typeof token);
+        // if (typeof token === 'undefined') throw 'В стеке пустой токен';
         result.push(token);
     }
     return result;
 
-    //// Функция в функции :-)
-    /** @param token {Token} */
+    ////////
+    /**
+     * Обрабатывает токены-операторы
+     * @param token {Token}
+     */
     function op(token) {
         /** @type {Token} */
         // let stackToken = null;

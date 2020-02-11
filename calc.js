@@ -143,27 +143,21 @@ function calculatePolish(polish, resultArray) {
             switch (token.value) {
                 case '+':
                     stack.push(new Token(op1 + op2));
-                    debugger
                     break;
                 case '-':
                     stack.push(new Token(op1 - op2));
-                    debugger
                     break;
                 case "*":
                     stack.push(new Token(op1 * op2));
-                    debugger
                     break;
                 case "/":
                     stack.push(new Token(op1 / op2));
-                    debugger
                     break;
             }
         }
     }
     if (stack.length > 1) {
-        console.log(`в стеке: ${stack.toString()}`);
-        debugger;
-        throw `Ошибка в выражении`;
+        throw `Ошибка в выражении (в стеке остались числа: ${stack.toString()})`;
     }
     return stack[0];
 }
