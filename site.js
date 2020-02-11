@@ -77,7 +77,13 @@ export function csvImport() {
 }
 
 export function csvExport() {
-    throw 'todo' // todo csvExport()
+    let link = document.getElementById('fileExport');
+    let csvString = csv.toCSV(getArr());
+    let href = 'data:text/csv;charset=UTF-8,' + window.encodeURIComponent(csvString);
+    // console.log(`href = ${href}`);
+    link.setAttribute('href', href);
+    link.setAttribute('download', 'table.csv');
+    link.click();
 }
 
 export function csvExportResults() {
